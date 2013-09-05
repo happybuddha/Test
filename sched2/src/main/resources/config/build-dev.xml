@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<project name="FiftyP" default="make-dev-war" basedir=".">
+    <description>
+		 FiftyP Web Application build File
+    </description>
+	
+	<!-- set global properties for this jbuildDir -->
+	<property name="src" location="src"/>
+	<property name="config" location="config"/>
+	<property name="jbuildDir" location="war/WEB-INF/classes"/>
+	<property name="war" location="war"/>
+	<property name="LocalTomcatPath" location="/usr/share/tomcat6"/>
+
+        <!-- set properties for deploying -->
+        <property name="tomcat" location="/etc/init.d/tomcat6"/>
+        <property name="httpd" location="/etc/init.d/httpd"/>
+        <property name="tomcat-webapps" location="/var/lib/tomcat6/webapps"/>
+	
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${jbuildDir}"/>
+	</target>
+	
+	<target name="jLocalCompile">
+		<javac srcdir="${src}" destdir="${jbuildDir}" debug="on">
+			<classpath>
+				<fileset dir="war/WEB-INF/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+				<fileset dir="${LocalTomcatPath}/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+		<copy todir="${jbuildDir}">
+			<fileset dir="${src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+			<fileset dir="${config}"/>
+		</copy>
+	</target>
+		
+	<!-- local build -->
+	<target name="make-dev-war" depends="clean,init,jLocalCompile" description="Deploy application dev"> 
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="catalina_home=.*$"
+			replace="catalina_home=${LocalTomcatPath}/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="app_root_physical_path=.*$"
+			replace="app_root_physical_path=${LocalTomcatPath}/webapps/ROOT/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="path1=.*$"
+			replace="path1=http://devimg1.fiftyp.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="path2=.*$"
+			replace="path2=http://devimg2.fiftyp.com/"
+            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="path3=.*$"
+			replace="path3=http://devimg3.fiftyp.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="path4=.*$"
+			replace="path4=http://devimg3.fiftyp.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="s_path1=.*$"
+			replace="s_path1=https://dev.fiftyp.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="s_path2=.*$"
+			replace="s_path2=https://dev.fiftyp.com/"
+            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="s_path3=.*$"
+			replace="s_path3=https://dev.fiftyp.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="main_path=.*$"
+			replace="main_path=http://dev.fiftyp.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="secure_domain=.*$"
+			replace="secure_domain=https://dev.fiftyp.com/"
+            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="email_logo_physical_path=.*$"
+			replace="email_logo_physical_path=${LocalTomcatPath}/webapps/ROOT/images/logo_parent.gif"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="welcome_email_logo_physical_path=.*$"
+			replace="welcome_email_logo_physical_path=${LocalTomcatPath}/webapps/ROOT/images/welcome_email_logo.jpg"
+            byline="true"
+		/>
+
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="spread_img_card_physical_path=.*$"			
+			replace="spread_img_card_physical_path=${LocalTomcatPath}/webapps/ROOT/images/spreadTheWorld/"
+            byline="true"
+		/>
+		
+		 <replaceregexp file="${jbuildDir}/paths.properties"
+					match="svm_log_path=.*$"			
+					replace="svm_log_path=/home/svm/log/"
+		            byline="true"
+				/>
+				
+				 <replaceregexp file="${jbuildDir}/paths.properties"
+					match="svm_processed_log_path=.*$"			
+					replace="svm_processed_log_path=/home/svm/processed/"
+		            byline="true"
+				/>
+		
+		  <replaceregexp file="${jbuildDir}/paths.properties"
+					match="svm_report_path=.*$"			
+					replace="svm_report_path=/home/svm/pending/"
+		            byline="true"
+				/>
+		 	
+	    	<replaceregexp file="${jbuildDir}/paths.properties"
+	    		match="svm_report_backup_path=.*$"			
+	    		replace="svm_report_backup_path=/home/svm/backup/"
+	    	    byline="true"
+	    	/>
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="svm_report_canada_path=.*$"			
+    		replace="svm_report_canada_path=/home/fiftyporders/ca/"
+    	    byline="true"
+    	/>
+
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="gift_card_images_US=.*$"			
+    		replace="gift_card_images_US=${LocalTomcatPath}/webapps/ROOT/images/giftCards/"
+    	    byline="true"
+    	/>
+
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="gift_card_images_CA=.*$"			
+    		replace="gift_card_images_CA=${LocalTomcatPath}/webapps/ROOT/images/giftCards/canada/"
+    	    byline="true"
+    	/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="approve_email_logo_physical_path=.*$"			
+			replace="approve_email_logo_physical_path=${LocalTomcatPath}/webapps/ROOT/images/check.png"
+    	    byline="true"
+    	/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="reject_email_logo_physical_path=.*$"			
+    		replace="reject_email_logo_physical_path=${LocalTomcatPath}/webapps/ROOT/images/X.png"
+    	    byline="true"
+    	/>
+		
+		<replaceregexp file="${jbuildDir}/config.properties"
+			match="accont_code_for_canada=.*$"
+			replace="accont_code_for_canada=false"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/config.properties"
+			match="email_address_for_canada_order_submition=.*$"
+			replace="email_address_for_canada_order_submition="
+            byline="true"
+		/>
+
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="parent_child_photo_path=.*$"			
+    		replace="parent_child_photo_path=${LocalTomcatPath}/webapps/parent_child_photo"
+    	    byline="true"
+    	/>	
+			
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="cause_images_path=.*$"			
+    		replace="cause_images_path=${LocalTomcatPath}/webapps/ROOT/images/share/causes/"
+    	    byline="true"
+    	/>
+
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="main_cause_images_path=.*$"			
+    		replace="main_cause_images_path=${LocalTomcatPath}/webapps/ROOT/images/share/"
+    	    byline="true"
+    	/>
+
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="ngo_photo_path=.*$"			
+    		replace="ngo_photo_path=${LocalTomcatPath}/webapps/ROOT/images/share/ngo/"
+    	    byline="true"
+    	/>
+
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="share_confirmation_img_physical_path=.*$"			
+    		replace="share_confirmation_img_physical_path=${LocalTomcatPath}/webapps/ROOT/images/share/ngo/"
+    	    byline="true"
+    	/>		
+		
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="default_avatar_path=.*$"			
+    		replace="default_avatar_path=${LocalTomcatPath}/webapps/ROOT/images/themes/avatars/avtr_default_plain.png"
+    	    byline="true"
+    	/>		
+
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="default_boy_avatar_path=.*$"			
+    		replace="default_boy_avatar_path=${LocalTomcatPath}/webapps/ROOT/images/themes/avatars/avtr_default_boy.png"
+    	    byline="true"
+    	/>	
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="default_girl_avatar_path=.*$"			
+    		replace="default_girl_avatar_path=${LocalTomcatPath}/webapps/ROOT/images/themes/avatars/avtr_default_girl.png"
+    	    byline="true"
+    	/>	
+
+		
+		<replaceregexp file="${jbuildDir}/payment.properties"
+				match="USER_NAME=.*$"
+				replace="USER_NAME=accounting_api1.fiftyp.com"
+	            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/payment.properties"
+				match="FRAUD_DETECTION_FLAG=.*$"
+				replace="FRAUD_DETECTION_FLAG=true"
+	            byline="true"
+		/>
+				
+			<replaceregexp file="${jbuildDir}/payment.properties"
+				match="USER_PWD=.*$"
+				replace="USER_PWD=CBG27W337RDPCN5G"
+	            byline="true"
+			/>
+				
+			<replaceregexp file="${jbuildDir}/payment.properties"
+				match="USER_SIGNATURE=.*$"
+				replace="USER_SIGNATURE=ANLtbss44zmc-2JgAPYn1Tf9sBp8AMR3rDp0AYTHo4MRtAKvNb63.qCM"
+	            byline="true"
+			/>
+			
+			<replaceregexp file="${jbuildDir}/payment.properties"
+				match="ENVIRONMENT=.*$"
+				replace="ENVIRONMENT=live"
+	            byline="true"
+			/>
+	
+			<replaceregexp file="${jbuildDir}/email.properties"
+				match="SMTP_AUTH_USER=.*$"
+				replace="SMTP_AUTH_USER=supportdev@threejars.com"
+	            byline="true"
+			/>		
+
+			<replaceregexp file="${jbuildDir}/email.properties"
+				match="SMTP_AUTH_PWD=.*$"
+				replace="SMTP_AUTH_PWD=supportdev123!"
+	            byline="true"
+			/>	
+
+			<replaceregexp file="${jbuildDir}/email.properties"
+				match="MAIL_REQUEST_FIFTYP_USER=.*$"
+				replace="MAIL_REQUEST_FIFTYP_USER=request-dev@threejars.com"
+	           byline="true"
+			/>		
+
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="&lt;appender-ref ref=&quot;stdout&quot;/&gt;"
+			replace=""
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="C:/Tomcat 6.0/logs/FiftyP_DEV.log"
+			replace="${LocalTomcatPath}/logs/FiftyP_DEV.log"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="C:/Tomcat 6.0/logs/FiftyP_HIBERNATE_DEV.log"
+			replace="${LocalTomcatPath}/logs/FiftyP_HIBERNATE_DEV.log"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/hibernate.cfg.xml"
+			match="&lt;property name=&quot;show_sql&quot;&gt;true&lt;/property&gt;"
+			replace="&lt;property name=&quot;show_sql&quot;&gt;false&lt;/property&gt;"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/hibernate.cfg.xml"
+			match="&lt;property name=&quot;format_sql&quot;&gt;true&lt;/property&gt;"
+			replace="&lt;property name=&quot;format_sql&quot;&gt;false&lt;/property&gt;"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/hibernate.cfg.xml"
+			match="&lt;property name=&quot;generate_statistics&quot;&gt;true&lt;/property&gt;"
+			replace="&lt;property name=&quot;generate_statistics&quot;&gt;false&lt;/property&gt;"
+            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/hibernate.cfg.xml"
+			match="&lt;property name=&quot;use_sql_comments&quot;&gt;true&lt;/property&gt;"
+			replace="&lt;property name=&quot;use_sql_comments&quot;&gt;false&lt;/property&gt;"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="&lt;appender name=&quot;mail&quot; class=&quot;org.apache.log4j.net.SMTPAppender&quot;&gt;[\t\n\r]*&lt;param name=&quot;Threshold&quot; value=&quot;off&quot; /&gt;"
+			replace="&lt;appender name=&quot;mail&quot; class=&quot;org.apache.log4j.net.SMTPAppender&quot;&gt;&lt;param name=&quot;Threshold&quot; value=&quot;error&quot; /&gt;"
+            byline="false"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="&lt;param name=&quot;Subject&quot; value=&quot;Local Machine Error&quot; /&gt;"
+			replace="&lt;param name=&quot;Subject&quot; value=&quot;DEV Machine Error&quot; /&gt;"
+            byline="false"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/config.properties"
+			match="include_tracking_script=.*$"
+			replace="include_tracking_script=false"
+            byline="true"
+		/>
+		
+		<war destfile="fiftyp.war" webxml="${war}/WEB-INF/web.xml">
+			<fileset dir="${war}"/>
+			<classes dir="${jbuildDir}"/>
+		</war>
+
+	</target>
+
+	<!-- prod build -->
+	<target name="make-prod-war" depends="make-dev-war"> 
+                <copy overwrite="true" file="src/paths.properties" tofile="${jbuildDir}/paths.properties"/>
+                <copy overwrite="true" file="src/payment.properties" tofile="${jbuildDir}/payment.properties"/>
+                <copy overwrite="true" file="src/log4j.xml" tofile="${jbuildDir}/log4j.xml"/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="catalina_home=.*$"
+			replace="catalina_home=${LocalTomcatPath}/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="app_root_physical_path=.*$"
+			replace="app_root_physical_path=${LocalTomcatPath}/webapps/ROOT/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="path1=.*$"
+			replace="path1=http://www1.threejars.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="path2=.*$"
+			replace="path2=http://www2.threejars.com/"
+            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="path3=.*$"
+			replace="path3=http://www3.threejars.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="path4=.*$"
+			replace="path4=http://www4.threejars.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="s_path1=.*$"
+			replace="s_path1=https://www.threejars.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="s_path2=.*$"
+			replace="s_path2=https://www.threejars.com/"
+            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="s_path3=.*$"
+			replace="s_path3=https://www.threejars.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="main_path=.*$"
+			replace="main_path=http://www.threejars.com/"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="secure_domain=.*$"
+			replace="secure_domain=https://www.threejars.com/"
+            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="email_logo_physical_path=.*$"
+			replace="email_logo_physical_path=${LocalTomcatPath}/webapps/ROOT/images/logo_parent.gif"
+            byline="true"
+		/>
+
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="welcome_email_logo_physical_path=.*$"
+			replace="welcome_email_logo_physical_path=${LocalTomcatPath}/webapps/ROOT/images/welcome_email_logo.jpg"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+			match="spread_img_card_physical_path=.*$"			
+			replace="spread_img_card_physical_path=${LocalTomcatPath}/webapps/ROOT/images/spreadTheWorld/"
+            byline="true"
+		/>
+		
+		 <replaceregexp file="${jbuildDir}/paths.properties"
+			match="svm_log_path=.*$"			
+			replace="svm_log_path=/home/svm/log/"
+		    byline="true"
+		/>
+				
+		 <replaceregexp file="${jbuildDir}/paths.properties"
+			match="svm_processed_log_path=.*$"			
+			replace="svm_processed_log_path=/home/svm/processed/"
+		    byline="true"
+		/>
+		
+        <replaceregexp file="${jbuildDir}/paths.properties"
+            match="svm_report_path=.*$"
+            replace="svm_report_path=/home/svm/pending/"
+            byline="true"
+        />
+
+        <replaceregexp file="${jbuildDir}/paths.properties"
+            match="svm_report_backup_path=.*$"
+            replace="svm_report_backup_path=/home/svm/backup/"
+            byline="true"
+        />
+		
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="svm_report_canada_path=.*$"			
+    		replace="svm_report_canada_path=/home/fiftyporders/ca/"
+    	    byline="true"
+    	/>
+
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="approve_email_logo_physical_path=.*$"			
+			replace="approve_email_logo_physical_path=${LocalTomcatPath}/webapps/ROOT/images/check.png"
+    	    byline="true"
+    	/>
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="reject_email_logo_physical_path=.*$"			
+    		replace="reject_email_logo_physical_path=${LocalTomcatPath}/webapps/ROOT/images/X.png"
+    	    byline="true"
+    	/>
+
+		<replaceregexp file="${jbuildDir}/config.properties"
+			match="accont_code_for_canada=.*$"
+			replace="accont_code_for_canada=false"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/config.properties"
+			match="email_address_for_canada_order_submition=.*$"
+			replace="email_address_for_canada_order_submition=order@giftcertificates.ca"
+            byline="true"
+		/>
+		
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="parent_child_photo_path=.*$"			
+    		replace="parent_child_photo_path=${LocalTomcatPath}/webapps/parent_child_photo"
+    	    byline="true"
+    	/>
+		
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="cause_images_path=.*$"			
+    		replace="cause_images_path=${LocalTomcatPath}/webapps/ROOT/images/share/causes/"
+    	    byline="true"
+    	/>
+
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="main_cause_images_path=.*$"			
+    		replace="main_cause_images_path=${LocalTomcatPath}/webapps/ROOT/images/share/"
+    	    byline="true"
+    	/>
+
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="ngo_photo_path=.*$"			
+    		replace="ngo_photo_path=${LocalTomcatPath}/webapps/ROOT/images/share/ngo/"
+    	    byline="true"
+    	/>
+
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="share_confirmation_img_physical_path=.*$"			
+    		replace="share_confirmation_img_physical_path=${LocalTomcatPath}/webapps/ROOT/images/share/ngo/"
+    	    byline="true"
+    	/>
+
+    	<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="default_avatar_path=.*$"			
+    		replace="default_avatar_path=${LocalTomcatPath}/webapps/ROOT/images/themes/avatars/avtr_default_plain.png"
+    	    byline="true"
+    	/>	
+
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="default_boy_avatar_path=.*$"			
+    		replace="default_boy_avatar_path=${LocalTomcatPath}/webapps/ROOT/images/themes/avatars/avtr_default_boy.png"
+    	    byline="true"
+    	/>	
+		
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="default_girl_avatar_path=.*$"			
+    		replace="default_girl_avatar_path=${LocalTomcatPath}/webapps/ROOT/images/themes/avatars/avtr_default_girl.png"
+    	    byline="true"
+    	/>	
+
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="gift_card_images_US=.*$"			
+    		replace="gift_card_images_US=${LocalTomcatPath}/webapps/ROOT/images/giftCards/"
+    	    byline="true"
+    	/>
+
+		<replaceregexp file="${jbuildDir}/paths.properties"
+    		match="gift_card_images_CA=.*$"			
+    		replace="gift_card_images_CA=${LocalTomcatPath}/webapps/ROOT/images/giftCards/canada/"
+    	    byline="true"
+    	/>
+
+		<replaceregexp file="${jbuildDir}/payment.properties"
+			match="CERTIFICATE_PASSWORD=.*$"
+			replace="CERTIFICATE_PASSWORD=keyHjByDfD13"
+            byline="true"
+		/>
+			
+			
+		<replaceregexp file="${jbuildDir}/payment.properties"
+			match="PAYMENT_HOST=.*$"
+			replace="PAYMENT_HOST=secure.linkpt.net"
+            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/payment.properties"
+			match="PAYMENT_PORT=.*$"
+			replace="PAYMENT_PORT=1129"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/payment.properties"
+			match="STORE_NUMBER=.*$"
+			replace="STORE_NUMBER=1001196483"
+            byline="true"
+		/>
+	
+		<replaceregexp file="${jbuildDir}/payment.properties"
+			match="CERTIFICATE_FILE_NAME=.*"
+			replace="CERTIFICATE_FILE_NAME=${LocalTomcatPath}/1001196483.p12"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/payment.properties"
+			match="FRAUD_DETECTION_FLAG=.*$"
+			replace="FRAUD_DETECTION_FLAG=true"
+            byline="true"
+		/>
+
+		<replaceregexp file="${jbuildDir}/payment.properties"
+				match="USER_NAME=.*$"
+				replace="USER_NAME=accounting_api1.fiftyp.com"
+	            byline="true"
+			/>		
+				
+		<replaceregexp file="${jbuildDir}/payment.properties"
+			match="USER_PWD=.*$"
+			replace="USER_PWD=CBG27W337RDPCN5G"
+	           byline="true"
+		/>
+				
+		<replaceregexp file="${jbuildDir}/payment.properties"
+			match="USER_SIGNATURE=.*$"
+			replace="USER_SIGNATURE=ANLtbss44zmc-2JgAPYn1Tf9sBp8AMR3rDp0AYTHo4MRtAKvNb63.qCM"
+	           byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/payment.properties"
+			match="ENVIRONMENT=.*$"
+			replace="ENVIRONMENT=live"
+	           byline="true"
+		/>
+
+		<replaceregexp file="${jbuildDir}/email.properties"
+			match="SMTP_AUTH_USER=.*$"
+			replace="SMTP_AUTH_USER=support@threejars.com"
+	           byline="true"
+		/>		
+
+		<replaceregexp file="${jbuildDir}/email.properties"
+			match="SMTP_AUTH_PWD=.*$"
+			replace="SMTP_AUTH_PWD=support123!"
+	           byline="true"
+		/>	
+		
+		<replaceregexp file="${jbuildDir}/email.properties"
+			match="MAIL_REQUEST_FIFTYP_USER=.*$"
+			replace="MAIL_REQUEST_FIFTYP_USER=request@threejars.com"
+				byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="&lt;appender-ref ref=&quot;stdout&quot;/&gt;"
+			replace=""
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="C:/Tomcat 6.0/logs/FiftyP_DEV.log"
+			replace="${LocalTomcatPath}/logs/FiftyP_PROD.log"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="C:/Tomcat 6.0/logs/FiftyP_HIBERNATE_DEV.log"
+			replace="${LocalTomcatPath}/logs/FiftyP_HIBERNATE_PROD.log"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/hibernate.cfg.xml"
+			match="&lt;property name=&quot;show_sql&quot;&gt;true&lt;/property&gt;"
+			replace="&lt;property name=&quot;show_sql&quot;&gt;false&lt;/property&gt;"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/hibernate.cfg.xml"
+			match="&lt;property name=&quot;format_sql&quot;&gt;true&lt;/property&gt;"
+			replace="&lt;property name=&quot;format_sql&quot;&gt;false&lt;/property&gt;"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/hibernate.cfg.xml"
+			match="&lt;property name=&quot;generate_statistics&quot;&gt;true&lt;/property&gt;"
+			replace="&lt;property name=&quot;generate_statistics&quot;&gt;false&lt;/property&gt;"
+            byline="true"
+		/>
+			
+		<replaceregexp file="${jbuildDir}/hibernate.cfg.xml"
+			match="&lt;property name=&quot;use_sql_comments&quot;&gt;true&lt;/property&gt;"
+			replace="&lt;property name=&quot;use_sql_comments&quot;&gt;false&lt;/property&gt;"
+            byline="true"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="&lt;appender name=&quot;mail&quot; class=&quot;org.apache.log4j.net.SMTPAppender&quot;&gt;[\t\n\r]*&lt;param name=&quot;Threshold&quot; value=&quot;off&quot; /&gt;"
+			replace="&lt;appender name=&quot;mail&quot; class=&quot;org.apache.log4j.net.SMTPAppender&quot;&gt;&lt;param name=&quot;Threshold&quot; value=&quot;error&quot; /&gt;"
+            byline="false"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="&lt;param name=&quot;Subject&quot; value=&quot;Local Machine Error&quot; /&gt;"
+			replace="&lt;param name=&quot;Subject&quot; value=&quot;PROD Machine Error&quot; /&gt;"
+            byline="false"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="&lt;logger name=&quot;com&quot;&gt;[\t\n\r]*&lt;level value=&quot;debug&quot;/&gt;"
+			replace="&lt;logger name=&quot;com&quot;&gt;&lt;level value=&quot;debug&quot;/&gt;"
+            byline="false"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/log4j.xml"
+			match="&lt;logger name=&quot;org.hibernate&quot;&gt;[\t\n\r]*&lt;level value=&quot;all&quot;/&gt;"
+			replace="&lt;logger name=&quot;com&quot;&gt;&lt;level value=&quot;error&quot;/&gt;"
+            byline="false"
+		/>
+		
+		<replaceregexp file="${jbuildDir}/config.properties"
+			match="include_tracking_script=.*$"
+			replace="include_tracking_script=true"
+            byline="true"
+		/>
+		
+		<war destfile="fiftyp-prod.war" webxml="${war}/WEB-INF/web.xml">
+			<fileset dir="${war}"/>
+			<classes dir="${jbuildDir}"/>
+		</war>
+		
+	</target>
+	
+	 <!--Delete the ${jbuildDir}  directory tree-->
+	<target name="clean" description="clean up">
+		<delete dir="${jbuildDir}"/> 
+	</target>
+
+        <!-- Deploy the build to Tomcat -->
+        <target name="deploy" description="Deploy to Tomcat" depends="make-prod-war">
+                <!-- Stop the Tocmat and Apache services -->
+                <exec executable="${tomcat}">
+                        <arg value="stop"/>
+                </exec>
+                <exec executable="${httpd}">
+                        <arg value="stop"/>
+                </exec>
+
+                <!-- Delete previously deployed webapp -->
+                <delete dir="${tomcat-webapps}/ROOT"/>
+                <delete file="${tomcat-webapps}/ROOT.war"/>
+
+                <!-- Deploy webapp -->
+                <copy file="fiftyp.war" tofile="ROOT.war"/>
+                <copy file="ROOT.war" todir="${tomcat-webapps}"/>
+
+		<!-- Deploy the latest db changes -->
+                <tstamp>
+                        <format property="current_time" pattern="MMddyyyy_hhmmss"/>
+                </tstamp>
+                <exec executable="/usr/bin/mysqldump" output="/builds/backups/dev/db/fiftypdb-${current_time}.sql">
+                        <arg value="fiftypdb"/>
+                </exec>
+		<exec executable="db/db.sh">
+			<arg value="fiftypdb"/>
+		</exec>
+
+                <!-- Start the Tocmat and Apache services -->
+                <exec executable="${tomcat}">
+                        <arg value="start"/>
+                </exec>
+                <exec executable="${httpd}">
+                        <arg value="start"/>
+                </exec>
+        </target>
+	
+		<target name="minifyJSCSS">
+			<property name ="baseDir" location="./war/"/>
+			<property name ="jarPath" location="./war/WEB-INF/lib/yuicompressor-2.4.1.jar"/>
+			<exec executable="java">
+			    <arg line=" -jar  ${jarPath} ${baseDir}/scripts/calendar/all_cal.js -o ${baseDir}/scripts/calendar/all_cal.js"/>
+			</exec>
+			
+			<!--exec executable="java">
+			    <arg line=" -jar  ${jarPath} ${baseDir}/scripts/calendar/calendar-en.js -o ${baseDir}/scripts/calendar/calendar-en.js"/>
+			</exec>
+			
+			<exec executable="java">
+				<arg line=" -jar  ${jarPath} ${baseDir}/scripts/calendar/calendar-setup.js -o ${baseDir}/scripts/calendar/calendar-setup.js"/>
+			</exec-->
+			
+			<exec executable="java">
+				<arg line=" -jar  ${jarPath} ${baseDir}/scripts/formValidator.js -o ${baseDir}/scripts/formValidator.js"/>
+			</exec>
+			
+			<exec executable="java">
+				<arg line=" -jar  ${jarPath} ${baseDir}/scripts/scroll.js -o ${baseDir}/scripts/scroll.js"/>
+			</exec>
+			
+			<exec executable="java">
+				<arg line=" -jar  ${jarPath} ${baseDir}/styles/calendar.css -o ${baseDir}/styles/calendar.css"/>
+			</exec>
+	    </target>
+			
+</project>

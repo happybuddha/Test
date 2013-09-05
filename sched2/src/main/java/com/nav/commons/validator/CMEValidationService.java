@@ -1,0 +1,12 @@
+package com.nav.commons.validator;
+
+import org.springframework.validation.Errors;
+
+import com.cme.commons.base.BaseForm;
+
+public interface CMEValidationService
+{
+   public void validateForm(BaseForm frm, Errors error);
+
+   public String resolveErrorCode(String errorCode);
+}

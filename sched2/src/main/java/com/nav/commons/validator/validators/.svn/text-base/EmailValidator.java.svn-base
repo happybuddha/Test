@@ -1,0 +1,27 @@
+package com.cme.commons.validator.validators;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class EmailValidator extends CMEValidator
+{
+   public boolean validate(Object value)
+   {
+
+      if(value == null || !(value instanceof String))
+      {
+         return false;
+      }
+      else
+      {
+         String email = value.toString();
+         // Set the email pattern string
+         Pattern p = Pattern.compile(".+@.+\\.[A-Za-z]+");
+         // Match the given string with the pattern
+         Matcher m = p.matcher(email);
+         // check whether match is found
+         boolean matchFound = m.matches();
+         return matchFound;
+      }
+   }
+}

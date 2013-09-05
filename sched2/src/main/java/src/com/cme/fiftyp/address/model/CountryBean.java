@@ -1,0 +1,65 @@
+package src.com.cme.fiftyp.address.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.cme.commons.base.BaseBean;
+
+@Entity
+@Table(name = "country")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+public class CountryBean implements BaseBean
+{
+   /**
+    * 
+    */
+   private static final long serialVersionUID = -1623907373080744466L;
+   private String countryCode;
+   private String name;
+   private String description;
+   public static final String UNITED_STATES = "US";
+   public static final String CANADA = "CA";
+
+ public static  enum COUNTRY_CODE {
+      US, CA
+   };
+   @Id
+   @Column(name = "country_code")
+   public String getCountryCode()
+   {
+      return countryCode;
+   }
+
+   public void setCountryCode(String countryCode)
+   {
+      this.countryCode = countryCode;
+   }
+
+   @Column(name = "name")
+   public String getName()
+   {
+      return name;
+   }
+
+   public void setName(String name)
+   {
+      this.name = name;
+   }
+
+   @Column(name = "description")
+   public String getDescription()
+   {
+      return description;
+   }
+
+   public void setDescription(String description)
+   {
+      this.description = description;
+   }
+
+}

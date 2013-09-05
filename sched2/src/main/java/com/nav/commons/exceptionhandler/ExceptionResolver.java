@@ -1,0 +1,86 @@
+package com.nav.commons.exceptionhandler;
+
+import java.io.PrintWriter;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.cme.commons.base.BaseBusinessException;
+import com.cme.fiftyp.ConstPageNames;
+import com.cme.fiftyp.constants.Constants;
+import org.springframework.web.multipart.*;
+
+@Component
+public class ExceptionResolver implements HandlerExceptionResolver
+{
+
+   private static Logger log = Logger.getLogger(ExceptionResolver.class);
+
+   public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+   {
+      if(ex instanceof BaseBusinessException)
+      {
+         log.error("---- Business exception should not be caught here but should be handled!!! ----", ex);
+      }
+      else
+      {
+         if(ex instanceof MaxUploadSizeExceededException)
+         {
+            try
+            {
+               response.setContentType("text/html");
+               PrintWriter os = response.getWriter();
+               os.print("<script type=\"text/javascript\">window.top.refreshPicture(false,false);</script>");
+               os.flush();
+               os.close();
+            }
+            catch(Exception e)
+            {
+               log.error("", e);
+            }
+         }
+         else
+         {
+            log.error("", ex);
+         }
+      }
+
+      if(request.getParameter("aja_mk_pointer") != null)
+      {
+         ServletOutputStream os = null;
+         try
+         {
+            os = response.getOutputStream();
+            response.setContentType(Constants.TEXT_XML);
+            os.print("<cmeExceptionMessage>");
+            if(ex instanceof BaseBusinessException)
+            {
+               os.print(ex.getMessage());
+            }
+            else
+            {
+               os.print("Sorry for the inconvenience, please try again later");
+            }
+            os.print("</cmeExceptionMessage>");
+            os.flush();
+            os.close();
+         }
+         catch(Exception e)
+         {
+            log.error("", e);
+         }
+         return null;
+      }
+      else
+      {
+         return new ModelAndView(ConstPageNames.ERROR);
+      }
+
+   }
+}

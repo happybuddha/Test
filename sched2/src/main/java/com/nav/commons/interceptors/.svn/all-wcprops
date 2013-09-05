@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/fiftyp_src/!svn/ver/2769/trunk/fiftyp/src/com/cme/commons/interceptors
+END
+CMEServiceInterceptor.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/fiftyp_src/!svn/ver/6291/trunk/fiftyp/src/com/cme/commons/interceptors/CMEServiceInterceptor.java
+END
+CMESecurityInterceptor.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/fiftyp_src/!svn/ver/6227/trunk/fiftyp/src/com/cme/commons/interceptors/CMESecurityInterceptor.java
+END
+HibernateProxyCleaner.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/fiftyp_src/!svn/ver/1781/trunk/fiftyp/src/com/cme/commons/interceptors/HibernateProxyCleaner.java
+END
+CMEValidationInterceptor.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/fiftyp_src/!svn/ver/8/trunk/fiftyp/src/com/cme/commons/interceptors/CMEValidationInterceptor.java
+END

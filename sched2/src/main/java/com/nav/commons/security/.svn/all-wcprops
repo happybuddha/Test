@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/fiftyp_src/!svn/ver/99/trunk/fiftyp/src/com/cme/commons/security
+END
+CMESecurityDecisionManager.java
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/fiftyp_src/!svn/ver/95/trunk/fiftyp/src/com/cme/commons/security/CMESecurityDecisionManager.java
+END
+CMEAuthorizationService.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/fiftyp_src/!svn/ver/95/trunk/fiftyp/src/com/cme/commons/security/CMEAuthorizationService.java
+END
+CMEAuthorizationServiceImpl.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/fiftyp_src/!svn/ver/6288/trunk/fiftyp/src/com/cme/commons/security/CMEAuthorizationServiceImpl.java
+END

@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/fiftyp_src/!svn/ver/2808/trunk/fiftyp/src/com/cme/commons/validator/validators
+END
+PhoneValidator.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/fiftyp_src/!svn/ver/1614/trunk/fiftyp/src/com/cme/commons/validator/validators/PhoneValidator.java
+END
+CMEValidator.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/fiftyp_src/!svn/ver/8/trunk/fiftyp/src/com/cme/commons/validator/validators/CMEValidator.java
+END
+RequiredFieldValidator.java
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/fiftyp_src/!svn/ver/8/trunk/fiftyp/src/com/cme/commons/validator/validators/RequiredFieldValidator.java
+END
+EmailValidator.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/fiftyp_src/!svn/ver/2633/trunk/fiftyp/src/com/cme/commons/validator/validators/EmailValidator.java
+END
+NumberValidator.java
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/fiftyp_src/!svn/ver/2808/trunk/fiftyp/src/com/cme/commons/validator/validators/NumberValidator.java
+END

@@ -1,0 +1,21 @@
+package com.cme.commons.validator.exception;
+
+import com.cme.commons.base.BaseBusinessException;
+
+public class ValidationException extends BaseBusinessException
+{
+
+   /**
+    * 
+    */
+   private static final long serialVersionUID = 6077638503518536255L;
+
+   public ValidationException(String msg)
+   {
+      super(msg);
+   }
+
+   public ValidationException()
+   {
+   }
+}

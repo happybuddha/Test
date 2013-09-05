@@ -1,0 +1,78 @@
+package com.nav.commons.template;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Enumeration;
+import java.util.Map;
+
+import com.cme.commons.base.BaseSystemException;
+import com.cme.fiftyp.FiftyPBaseApp;
+
+import freemarker.core.Macro;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+
+public class TemplateRenderer
+{
+   @SuppressWarnings("unchecked")
+   public static String renderTemplate(String templatePath, String macroName, Map mp) throws BaseSystemException
+   {
+      templatePath = FiftyPBaseApp.FREEMARKER_DIR + File.separator + templatePath;
+      FileReader reader;
+      Template templateFile = null;
+      try
+      {
+         reader = new FileReader(templatePath);
+         templateFile = new Template("", reader, null);
+      }
+      catch(FileNotFoundException e)
+      {
+         throw new BaseSystemException(e);
+      }
+      catch(IOException e)
+      {
+         throw new BaseSystemException(e);
+      }
+
+      // get the needed macro
+      Map macros = templateFile.getMacros();
+      Macro neededMacro = (Macro) macros.get(macroName);
+      Enumeration st = neededMacro.children();
+
+      StringBuilder templateString = new StringBuilder();
+      while(st.hasMoreElements())
+      {
+         templateString.append(st.nextElement().toString());
+      }
+
+      return renderTemplate(templateString.toString(), mp);
+   }
+
+   public static String renderTemplate(String htmlData, Map<String, Object> mp) throws BaseSystemException
+   {
+      StringReader stReader = new StringReader(htmlData);
+      Template templateFile;
+      StringWriter stW = null;
+      try
+      {
+         templateFile = new Template("", stReader, null);
+         FiftyPBaseApp.setUpFreeMarkerConfiguration(templateFile.getConfiguration());
+         stW = new StringWriter();
+         templateFile.process(mp, stW);
+      }
+      catch(IOException e)
+      {
+         throw new BaseSystemException(e);
+      }
+      catch(TemplateException e)
+      {
+         throw new BaseSystemException(e);
+      }
+
+      return stW.toString();
+   }
+}

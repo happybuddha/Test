@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/fiftyp_src/!svn/ver/3248/trunk/fiftyp/src/com/cme/commons/mail
+END
+EmailServiceThread.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/fiftyp_src/!svn/ver/7396/trunk/fiftyp/src/com/cme/commons/mail/EmailServiceThread.java
+END
+EmailService.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/fiftyp_src/!svn/ver/7396/trunk/fiftyp/src/com/cme/commons/mail/EmailService.java
+END
+SMTPAuthenticator.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/fiftyp_src/!svn/ver/8/trunk/fiftyp/src/com/cme/commons/mail/SMTPAuthenticator.java
+END

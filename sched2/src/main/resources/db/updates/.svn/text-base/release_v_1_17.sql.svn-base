@@ -1,0 +1,11 @@
+/*SQL update script for release v1.17 */
+UPDATE mm_gift_occasion
+SET `name` = "Valentine's Day"
+WHERE `mm_gift_occasion`.`name` = "Valentine's day";
+
+/* update description for the `cause`  (Records 5 and 6) */
+update cause set description = 'Have you ever seen seals hanging out at the beach? Seals spend part of their time on land, stretching out to rest or to warm up in the sun. They also climb out of the water to give birth, and sometimes leave their pups on land while searching for their next meal.\r\nBut sometimes a seal on the beach is stranded - unable to get back to the water because it is injured or sick. A seal that''s tangled in a fisherman''s net may come ashore and get stuck. Or a mother seal may get frightened by the presence of people and rush back to the water, leaving her pups behind.\r\nA stranded seal needs the help of a trained biologist, who can guide it back to the water, transport it to an animal hospital, or keep it calm until it''s ready to swim again. You can help too: Your donation of $10.00 will send a biologist to the aid of a stranded seal.' where cause_id=5;
+update cause set description = 'The truckers who haul food and other goods across the country often spend days on the road - and nights in their big rigs. And they keep their engine running even when they''re asleep, to heat or air-condition the truck, to run kitchen appliances, and to keep refrigerated cargo cold. Idling engines burn up to a gallon of diesel fuel an hour, releasing harmful greenhouse gases without moving an inch!\r\nNow there''s a greener way for truck drivers to get a good night''s sleep. The Truck Stop Electrification project lets drivers turn off their engines and use electric energy to heat, cool, and power the inside of the truck. With more than a million drivers pulling in to truck stops each day for a 10-hour rest period, the Electrification project can cut the use of diesel fuel by 10 million gallons a day! That would help conserve limited oil supplies and fight global warming - better for everyone in the long haul!' where cause_id=6;
+
+/* Removing the rating_photo_url column since we are using naming convention of images/share/causes/{cause id}_Zoom.png instead */
+ALTER TABLE cause DROP column rating_photo_url;

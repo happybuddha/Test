@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+           	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<!-- enable the configuration of transactional behavior based on annotations -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.cme" />
+	<aop:aspectj-autoproxy />
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="interceptors">
+			<bean
+				class="com.cme.commons.interceptors.CMESecurityInterceptor">
+			</bean>
+		</property>
+	</bean>
+
+	<!--  bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/-->
+
+	<!-- freemarker config -->
+	<bean id="freemarkerConfig"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath"
+			value="/WEB-INF/freemarker/" />
+	</bean>
+
+	<!-- 
+		
+		View resolvers can also be configured with ResourceBundles or XML files. If you need
+		different view resolving based on Locale, you have to use the resource bundle resolver.
+		
+	-->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="cache" value="true" />
+		<property name="prefix" value="" />
+		<property name="suffix" value=".ftl" />
+
+		<!-- if you want to use the Spring FreeMarker macros, set this property to true -->
+		<property name="exposeSpringMacroHelpers" value="true" />
+	</bean>
+
+	<!--  SCHEDULERS CONFIGURATION  -->
+	<bean name="deleteOutdatedChoresAndProjectsJob"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="com.cme.fiftyp.schedulers.job.DeleteOutdatedChoresAndProjectsJob" />
+	</bean>
+
+	<bean name="maintainAllowanceJob"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="com.cme.fiftyp.schedulers.job.MaintainAllowanceJob" />
+	</bean>
+
+	<bean name="spendOrdersReportJob"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="com.cme.fiftyp.schedulers.job.SpendOrdersReportJob" />
+	</bean>
+
+	<bean name="transactionProcessingJob"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="com.cme.fiftyp.schedulers.job.TransactionProcessingJob" />
+	</bean>
+
+	<bean name="markShippingStatus"
+		class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass"
+			value="com.cme.fiftyp.schedulers.job.MarkShippingStatus" />
+	</bean>
+	
+    <bean name="resetChildPointsJob"
+        class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"
+            value="com.cme.fiftyp.schedulers.job.ResetChildPointsJob" />
+    </bean>
+    
+    <bean name="processEmailRequestApprovalsJob"
+        class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"
+            value="com.cme.fiftyp.schedulers.job.ProcessEmailRequestApprovalsJob" />
+    </bean>
+    
+    <bean name="processEmailMessageRepliesJob"
+        class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass"
+            value="com.cme.fiftyp.schedulers.job.ProcessEmaiMessageRepliesJob" />
+    </bean>
+    
+	<bean id="choresAndProjectsTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail"
+			ref="deleteOutdatedChoresAndProjectsJob" />
+		<!-- run every 11 pm 0 0 23 * * ? -->
+		<property name="cronExpression" value="0 2 0 * * ?" />
+	</bean>
+
+	<bean id="allowanceTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="maintainAllowanceJob" />
+		<!-- run every 11 pm 0 0 23 * * ? -->
+		<property name="cronExpression" value="0 29 21 * * ?" />
+	</bean>
+
+	<bean id="spendReportTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="spendOrdersReportJob" />
+		<!-- run every 11 pm 0 0 55 * * ? -->
+		<property name="cronExpression" value="59 55 23 * * ?" />
+	</bean>
+
+	<bean id="resetChildPointsTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="resetChildPointsJob" />
+		<!-- run every night at 12:20a ? -->
+		<property name="cronExpression" value="0 20 0 * * ?" />
+	</bean>
+	
+	<bean id="processEmailRequestApprovalsTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="processEmailRequestApprovalsJob" />
+		<!-- run every at 2 mintues  ? -->
+		<property name="cronExpression" value="0 */2 * * * ?" />
+	</bean>
+	
+	<bean id="processEmailMessageRepliesTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="processEmailMessageRepliesJob" />
+		<!-- run every at 2 mintues  ? -->
+		<property name="cronExpression" value="0 */2 * * * ?" />
+	</bean>
+	
+	<bean id="transactionsTrigger"
+        class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="transactionProcessingJob" />
+        <!-- run every 11 pm 0 0 23 * * ? -->
+        <property name="cronExpression" value="0 0/5 * * * ?" />
+    </bean>
+
+	<bean id="markShippingStatusTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="markShippingStatus" />
+		<property name="cronExpression" value="0 0 2 * * ?" />
+	</bean>
+
+	<bean
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="choresAndProjectsTrigger" />
+				<ref bean="allowanceTrigger" />
+				<ref bean="spendReportTrigger" />
+				<ref bean="transactionsTrigger" />
+				<ref bean="markShippingStatusTrigger" />
+				<ref bean="processEmailRequestApprovalsTrigger" />
+				<ref bean="processEmailMessageRepliesTrigger"/>
+				<ref bean="resetChildPointsTrigger" />
+			</list>
+		</property>
+	</bean>
+
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
+        <property name="maxUploadSize" value="1048576" />
+    </bean>
+</beans>

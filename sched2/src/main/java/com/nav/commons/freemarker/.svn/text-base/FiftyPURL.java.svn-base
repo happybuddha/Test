@@ -1,0 +1,196 @@
+package com.cme.commons.freemarker;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import com.cme.fiftyp.FiftyPBaseApp;
+import com.cme.fiftyp.back_office.model.AppPropertyBean;
+import com.cme.fiftyp.back_office.service.BackOfficeService;
+import freemarker.core.Environment;
+import freemarker.ext.beans.HashAdapter;
+import freemarker.ext.servlet.HttpRequestHashModel;
+import freemarker.template.TemplateMethodModel;
+import freemarker.template.TemplateModelException;
+
+public class FiftyPURL implements TemplateMethodModel
+{
+   private static final String SWF_REQUEST = ".swf";
+   private static final String JS_REQUEST = ".js";
+   private static final String JPG_REQUEST = ".jpg";
+   private static final String PNG_REQUEST = ".png";
+   private static final String GIF_REQUEST = ".gif";
+   private static final String CSS_REQUEST = ".css";
+   private static final String SERVLET_REQUEST = ".do";
+   private static List<String> pq = new ArrayList<String>();
+   private static List<String> securePQ = new ArrayList<String>();
+   private static Map<String, String> urlMap = new HashMap<String, String>();
+
+   private static String imagesPath = "images/";
+   private static String swfPath = FiftyPBaseApp.MAIN_DOMAIN + "swf/";
+   private static String secureSwfPath = FiftyPBaseApp.SECURE_DOMAIN + "swf/";
+   private static String cssPath = FiftyPBaseApp.MAIN_DOMAIN + "styles/";
+   private static String secureCssPath = FiftyPBaseApp.SECURE_DOMAIN + "styles/";
+   private static String scriptsPath = FiftyPBaseApp.MAIN_DOMAIN + "scripts/";
+   private static String secureScriptsPath = FiftyPBaseApp.SECURE_DOMAIN + "scripts/";
+
+   public static String getImagesPath()
+   {
+      return imagesPath;
+   }
+
+   @SuppressWarnings("unchecked")
+   public Object exec(List argsList) throws TemplateModelException
+   {
+      if(argsList.size() == 0)
+      {
+         throw new IllegalArgumentException("Wrong arguments");
+      }
+      HashAdapter hashAdapter = ((HashAdapter) Environment.getCurrentEnvironment().__getitem__("Request"));
+      // hashAdapter can be null in case of rendering the template manually
+      boolean isSecure = hashAdapter != null ? ((HttpRequestHashModel) hashAdapter.getTemplateModel()).getRequest().isSecure() : false;
+      if(argsList.size() > 1 && Boolean.valueOf(argsList.get(1).toString()) == true)
+      {
+         isSecure = true;
+      }
+      String urlArgument = (String) argsList.get(0);
+      String key = urlArgument + isSecure;
+      if(urlMap.containsKey(key) == false)
+      {
+         urlMap.put(key, getCorrectUrl(urlArgument, isSecure));
+      }
+      return urlMap.get(key);
+   }
+
+   private static String getCorrectUrl(String url, boolean isSecure)
+   {
+      String lowerCaseUrl = url.toLowerCase();
+      // this is the case where we are setting the image
+      // dynamically or from javascript
+      String resultUrl = "";
+      if(lowerCaseUrl.indexOf(SERVLET_REQUEST) != -1)
+      {
+         if(lowerCaseUrl.equalsIgnoreCase("captcha.do") == false)
+         {
+            resultUrl = FiftyPBaseApp.MAIN_DOMAIN + url;
+         }
+         else
+         {
+            if(isSecure == true)
+            {
+               resultUrl = FiftyPBaseApp.SECURE_DOMAIN + url;
+            }
+            else
+            {
+               resultUrl = FiftyPBaseApp.MAIN_DOMAIN + url;
+            }
+         }
+      }
+      else
+         if(lowerCaseUrl.indexOf(CSS_REQUEST) != -1)
+         {
+            if(isSecure == false)
+            {
+               resultUrl = cssPath + url;
+            }
+            else
+            {
+               resultUrl = secureCssPath + url;
+            }
+         }
+         else
+            if(lowerCaseUrl.indexOf(JS_REQUEST) != -1)
+            {
+               if(isSecure == false)
+               {
+                  resultUrl = scriptsPath + url;
+               }
+               else
+               {
+                  resultUrl = secureScriptsPath + url;
+               }
+            }
+            else
+               if(lowerCaseUrl.equalsIgnoreCase("SWF") || lowerCaseUrl.indexOf(SWF_REQUEST) != -1)
+               {
+                  if(isSecure == false)
+                  {
+                     resultUrl = swfPath;
+                     if(url.equals("SWF") == false)
+                     {
+                        resultUrl += url;
+                     }
+                  }
+                  else
+                  {
+                     resultUrl = secureSwfPath;
+                     if(url.equals("SWF") == false)
+                     {
+                        resultUrl += url;
+                     }
+                  }
+               }
+               else
+               {
+                  // case of an image
+                  if(lowerCaseUrl.equalsIgnoreCase("IMAGES") || lowerCaseUrl.indexOf(GIF_REQUEST) != -1 || lowerCaseUrl.indexOf(PNG_REQUEST) != -1
+                     || lowerCaseUrl.indexOf(JPG_REQUEST) != -1)
+                  {
+                     resultUrl = getRandomPath(isSecure) + imagesPath;
+                     if(url.equals("IMAGES") == false)
+                     {
+                        resultUrl += url;
+                     }
+                  }
+               }
+
+      if(url.indexOf(SERVLET_REQUEST) == -1 && url.equals("SWF") == false && lowerCaseUrl.equalsIgnoreCase("IMAGES") == false
+         && resultUrl.indexOf("?") != -1)
+      {
+         resultUrl = resultUrl + "&v=";
+         resultUrl += FiftyPBaseApp.VERSION_NUM;
+      }
+      else
+         if(url.indexOf(SERVLET_REQUEST) == -1 && url.equals("SWF") == false && lowerCaseUrl.equalsIgnoreCase("IMAGES") == false)
+         {
+            resultUrl = resultUrl + "?v=";
+            resultUrl += FiftyPBaseApp.VERSION_NUM;
+         }
+
+      return resultUrl;
+   }
+
+   private static String getRandomPath(boolean isSecure)
+   {
+      if(pq.size() == 0 || securePQ.size() == 0)
+      {
+         BackOfficeService backOfficeService = (BackOfficeService) FiftyPBaseApp.getBeanByName("backOfficeServiceImpl");
+         List<AppPropertyBean> imagesPaths = backOfficeService.getImagePaths();
+         for(AppPropertyBean path : imagesPaths)
+         {
+            if(path.getKey().startsWith("s"))
+            {
+               securePQ.add(path.getValue());
+            }
+            else
+            {
+               pq.add(path.getValue());
+            }
+         }
+         securePQ.add(FiftyPBaseApp.SECURE_DOMAIN);
+      }
+
+      Random r = new Random();
+      int randint = r.nextInt(4);
+      String result = isSecure == false ? pq.get(randint) : securePQ.get(randint);
+      return result;
+   }
+
+   public static void clearPaths()
+   {
+      urlMap.clear();
+      securePQ.clear();
+      pq.clear();
+   }
+}

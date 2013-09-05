@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/fiftyp_src/!svn/ver/2468/trunk/fiftyp/src/com/cme/fiftyp/address/model
+END
+StateBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/fiftyp_src/!svn/ver/5075/trunk/fiftyp/src/com/cme/fiftyp/address/model/StateBean.java
+END
+CountryBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/fiftyp_src/!svn/ver/3754/trunk/fiftyp/src/com/cme/fiftyp/address/model/CountryBean.java
+END
+AddressBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/fiftyp_src/!svn/ver/6554/trunk/fiftyp/src/com/cme/fiftyp/address/model/AddressBean.java
+END
+AddressTypeBean.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/fiftyp_src/!svn/ver/35/trunk/fiftyp/src/com/cme/fiftyp/address/model/AddressTypeBean.java
+END

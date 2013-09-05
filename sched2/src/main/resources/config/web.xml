@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+	<display-name>FiftyP</display-name>
+    <description>FiftyP Application</description>
+
+	<context-param>
+    	<param-name>contextConfigLocation</param-name>
+    	<param-value>/WEB-INF/fiftyp-servlet.xml,classpath:/fiftyp-data.xml</param-value>
+    </context-param>
+	
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<servlet>
+		<servlet-name>fiftyp</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>	
+    </servlet>
+	
+	<servlet-mapping>
+    	<servlet-name>fiftyp</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+    	<servlet-name>fiftyp</servlet-name>
+		<url-pattern>/card</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+        <servlet-name>fiftyp</servlet-name>
+        <url-pattern>/gift</url-pattern>
+    </servlet-mapping>
+    
+	<servlet-mapping>
+    	<servlet-name>fiftyp</servlet-name>
+		<url-pattern>/faq</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+    	<servlet-name>fiftyp</servlet-name>
+		<url-pattern>/backoffice</url-pattern>
+	</servlet-mapping>
+	
+    <servlet-mapping>
+        <servlet-name>fiftyp</servlet-name>
+        <url-pattern>/support</url-pattern>
+    </servlet-mapping>
+    
+	<servlet>
+        <servlet-name>PassImageServlet</servlet-name>
+        <servlet-class>com.temesoft.security.image.PassImageServlet</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>PassImageServlet</servlet-name>
+        <url-pattern>/captcha.do</url-pattern>
+    </servlet-mapping>
+    
+    <!-- filter>
+		<filter-name>staticFilesFilter</filter-name>
+		<filter-class>com.cme.commons.filter.StaticFilesFilter</filter-class>	
+    </filter>
+	
+	<filter-mapping>
+    	<filter-name>staticFilesFilter</filter-name>
+		<url-pattern>*.png</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+    	<filter-name>staticFilesFilter</filter-name>
+		<url-pattern>*.gif</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+    	<filter-name>staticFilesFilter</filter-name>
+		<url-pattern>*.jpg</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+    	<filter-name>staticFilesFilter</filter-name>
+		<url-pattern>*.jpeg</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+    	<filter-name>staticFilesFilter</filter-name>
+		<url-pattern>*.js</url-pattern>
+	</filter-mapping>
+	
+	<filter-mapping>
+    	<filter-name>staticFilesFilter</filter-name>
+		<url-pattern>*.css</url-pattern>
+	</filter-mapping-->
+	<listener>
+		<listener-class>com.cme.fiftyp.FiftypSessionListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>com.cme.fiftyp.FiftypSessionExpiryListener</listener-class>
+	</listener>	
+	<listener>
+		<listener-class>com.cme.fiftyp.FiftypServletContextListener</listener-class>
+	</listener>	
+	
+</web-app>

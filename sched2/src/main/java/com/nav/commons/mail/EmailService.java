@@ -1,0 +1,226 @@
+package com.nav.commons.mail;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import com.cme.fiftyp.constants.Constants;
+
+@Service
+public class EmailService
+{
+   protected static Logger log = Logger.getLogger(EmailService.class);
+
+   public EmailService()
+   {
+      // 1000*180 -> start with an initial delay of 180 seconds since
+      // processing this line, 300 seconds == 5 minutes
+      // delay time
+      new java.util.Timer().scheduleAtFixedRate(new java.util.TimerTask()
+      {
+         public void run()
+         {
+            processEmails();
+         }
+      }, 1000 * (Integer.valueOf(MAIL_SENDING_INITIAL_DELAY).intValue()), 1000 * (Integer.valueOf(MAIL_SENDING_FREQUENCY).intValue()));
+   }
+
+   /**
+    * the queue where all mails will go to
+    */
+   private static final Queue<Thread> queue = new ConcurrentLinkedQueue<Thread>();
+
+   public static String smtpServer = "gotocme.com";
+   public static String x_mailer = "FiftyMailServer";
+   public static String MAIL_SUPPORT;
+   public static String MAIL_SUPPORT_NAME;
+
+   public static String MAIL_ADMIN;
+   public static String MAIL_ADMIN_NAME;
+   public static String MAIL_WELCOME;
+   public static String APPEND_KID_ADDRESS;
+
+   public static String MAIL_SALES;
+   public static String MAIL_SALES_NAME;
+   public static String MAIL_SHIPPING;
+   public static String MAIL_SHIPPING_NAME;
+   public static String MAIL_SUGGEST_CAUSE;
+   public static String MAIL_SUGGEST_CAUSE_NAME;
+   public static String MAIL_SENDING_INITIAL_DELAY;
+   public static String MAIL_SENDING_FREQUENCY;
+   public static String MAIL_SENDING_INTERVAL;
+
+   static
+   {
+      readProperties();
+   }
+
+   /**
+    * readProperties() sets the static values for email parameters from
+    * email.properties
+    * 
+    */
+   private static void readProperties()
+   {
+      ResourceBundle myEmailProperties = ResourceBundle.getBundle(Constants.EMAIL_PROP_FILE, java.util.Locale.getDefault());
+      x_mailer = myEmailProperties.getString(Constants.X_MAILER_KEY);
+      smtpServer = myEmailProperties.getString(Constants.SMTP_SERVER_KEY);
+
+      MAIL_SUPPORT = myEmailProperties.getString(Constants.MAIL_SUPPORT_KEY);
+      MAIL_SUPPORT_NAME = myEmailProperties.getString(Constants.MAIL_SUPPORT_NAME_KEY);
+      MAIL_ADMIN = myEmailProperties.getString(Constants.MAIL_ADMIN_KEY);
+      APPEND_KID_ADDRESS = myEmailProperties.getString(Constants.APPEND_KID_ADDRESS);
+      MAIL_ADMIN_NAME = myEmailProperties.getString(Constants.MAIL_ADMIN_NAME_KEY);
+      MAIL_SALES = myEmailProperties.getString(Constants.MAIL_SALES_KEY);
+      MAIL_SALES_NAME = myEmailProperties.getString(Constants.MAIL_SALES_NAME_KEY);
+      MAIL_SUGGEST_CAUSE = myEmailProperties.getString(Constants.MAIL_SUGGEST_CAUSE_KEY);
+      MAIL_SUGGEST_CAUSE_NAME = myEmailProperties.getString(Constants.MAIL_SUGGEST_CAUSE_NAME_KEY);
+      MAIL_SENDING_INITIAL_DELAY = myEmailProperties.getString(Constants.MAIL_SENDING_INITIAL_DELAY);
+      MAIL_SENDING_FREQUENCY = myEmailProperties.getString(Constants.MAIL_SENDING_FREQUENCY);
+      MAIL_SENDING_INTERVAL = myEmailProperties.getString(Constants.MAIL_SENDING_INTERVAL);
+   }
+
+   public void send(String senderAddress, String senderName, String[] recipientAddress, String[] recipientAddressCC, String[] recipientAddressBCC,
+      String subject, String htmlBody, String textBody, String[] attachment, String replyAddress)
+   {
+
+      Thread emailThread = new EmailServiceThread(senderAddress, senderName, recipientAddress, recipientAddressCC, recipientAddressBCC, subject,
+         htmlBody, textBody, attachment, replyAddress);
+
+      log.debug("EmailService.queue.offer(): Thread Name: " + emailThread.getName() + ", Thread state: " + emailThread.getState().toString());
+      queue.offer(emailThread);
+   }
+
+   public static void processEmails()
+   {
+      log.debug("ENTER: processEmails(). Current queue size = " + EmailService.queue.size());
+
+      try
+      {
+         List<Thread> listOfMails = new ArrayList<Thread>();
+         if(EmailService.queue != null)
+         {
+            Thread emailThread;
+            while((emailThread = EmailService.queue.poll()) != null)
+            {
+               log.debug("EmailService.queue.poll(): Thread Name: " + emailThread.getName() + ", Thread state: " + emailThread.getState().toString());
+               emailThread.start();
+               listOfMails.add(emailThread);
+               try
+               {
+                  Thread.sleep(Integer.valueOf(MAIL_SENDING_INTERVAL).intValue());
+               }
+               catch(Exception e)
+               {
+                  log.error("", e);
+               }
+            }
+         }
+
+         // calling join on all threads
+         for(int i = 0; i < listOfMails.size(); i++)
+         {
+            listOfMails.get(i).join();
+         }
+      }
+      catch(Exception e)
+      {
+         log.error("", e);
+      }
+
+      EmailService.queue.clear(); // setting the queue back to 0
+
+      log.debug("EXIT: processEmails()");
+   }
+
+   /* General send functions */
+   public void send(String senderAddress, String senderName, String to, String subject, String htmlBody, String textBody, String attachment,
+      String replyAddress)
+   {
+      send(senderAddress, senderName, new String[]{to }, null, null, subject, htmlBody, textBody, new String[]{attachment }, replyAddress);
+   }
+
+   public void send(String senderAddress, String senderName, String to, String subject, String htmlBody, String textBody, String replyAddress)
+   {
+      send(senderAddress, senderName, to, null, null, subject, htmlBody, textBody, replyAddress);
+   }
+
+   /*
+    * public void send(String senderAddress, String senderName, String to,
+    * String cc, String subject, String htmlBody, String textBody, String
+    * replyAddress) { send(senderAddress, senderName, to, cc, null, subject,
+    * htmlBody, textBody, replyAddress); }
+    */
+   public void send(String senderAddress, String senderName, String to, String cc, String bcc, String subject, String htmlBody, String textBody,
+      String replyAddress)
+   {
+      String[] recipientAddress = new String[]{to };
+      String[] recipientAddressCC = new String[]{cc };
+      String[] recipientAddressBCC = new String[]{bcc };
+      send(senderAddress, senderName, recipientAddress, recipientAddressCC, recipientAddressBCC, subject, htmlBody, textBody, null, replyAddress);
+   }
+
+   public void send(String senderAddress, String senderName, String[] to, String subject, String htmlBody, String textBody, String replyAddress)
+   {
+      send(senderAddress, senderName, to, null, null, subject, htmlBody, textBody, null, replyAddress);
+   }
+
+   public void send(String senderAddress, String senderName, String[] to, String[] cc, String subject, String htmlBody, String textBody,
+      String replyAddress)
+   {
+      send(senderAddress, senderName, to, cc, null, subject, htmlBody, textBody, null, replyAddress);
+   }
+
+   public void send(String senderAddress, String senderName, String[] to, String cc, String subject, String htmlBody, String textBody,
+      String replyAddress)
+   {
+      String[] recipientAddressCC = new String[]{cc };
+      send(senderAddress, senderName, to, recipientAddressCC, null, subject, htmlBody, textBody, null, replyAddress);
+   }
+
+   public void send(String senderAddress, String senderName, String to, String subject, String htmlBody, String textBody, String[] attachment,
+      String replyAddress)
+   {
+      send(senderAddress, senderName, new String[]{to }, null, null, subject, htmlBody, textBody, attachment, replyAddress);
+   }
+
+   /* Send from admin email address */
+   public void sendFromAdmin(String to, String subject, String htmlBody, String textBody, String logoPath, String replyAddress)
+   {
+      send(MAIL_ADMIN, MAIL_ADMIN_NAME, to, subject, htmlBody, textBody, logoPath, replyAddress);
+   }
+
+   /* Send to admin email address */
+   public void sendToAdmin(String mail_from, String subject, String htmlBody, String textBody, String replyAddress)
+   {
+      send(mail_from, MAIL_ADMIN_NAME, MAIL_ADMIN, subject, htmlBody, textBody, replyAddress);
+   }
+
+   /* Send to admin email address */
+   public void sendToSupport(String mail_from, String subject, String htmlBody, String textBody, String replyAddress)
+   {
+      send(mail_from, MAIL_SUPPORT_NAME, MAIL_SUPPORT, subject, htmlBody, textBody, replyAddress);
+   }
+
+   /* Send welcome email from admin email address */
+   public void sendWelcomeEmailFromAdmin(String to, String subject, String htmlBody, String textBody, String[] attachment, String replyAddress)
+   {
+      send(MAIL_ADMIN, MAIL_ADMIN_NAME, to, subject, htmlBody, textBody, attachment, replyAddress);
+   }
+
+   // submit CA product order csv file
+   public void sendCanadianSpendReport(String to, String subject, String htmlBody, String textBody, String[] attachment, String replyAddress)
+   {
+      send(MAIL_ADMIN, MAIL_ADMIN_NAME, to, subject, htmlBody, textBody, attachment, replyAddress);
+   }
+
+   public void sendFromKid(String kidName, String to, String subject, String htmlBody, String textBody, String logoPath, String replyAddress)
+   {
+      send(MAIL_ADMIN, kidName + APPEND_KID_ADDRESS, to, subject, htmlBody, textBody, logoPath, replyAddress);
+   }
+}

@@ -1,0 +1,155 @@
+package com.nav.commons.file;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+public class FileUtils
+{
+   private static Logger log = Logger.getLogger(FileUtils.class);
+
+   public static void copyFile(String fileSourcePath, String fileOuputPath) throws IOException
+   {
+      File inputFile = new File(fileSourcePath);
+      File outputFile = new File(fileOuputPath);
+
+      FileReader in;
+      FileWriter out;
+      in = new FileReader(inputFile);
+      out = new FileWriter(outputFile);
+      int c;
+
+      while((c = in.read()) != -1)
+         out.write(c);
+
+      in.close();
+      out.close();
+   }
+
+   public static void copyDirectory(File srcPath, File dstPath, String... extensionsToCopy) throws IOException
+   {
+      if(srcPath.isDirectory())
+      {
+         if(srcPath.isHidden() == false || srcPath.getName().startsWith(".") == false)
+         {
+            if(!dstPath.exists())
+            {
+               dstPath.mkdir();
+            }
+            String files[] = srcPath.list();
+            for(int i = 0; i < files.length; i++)
+            {
+               copyDirectory(new File(srcPath, files[i]), new File(dstPath, files[i]), extensionsToCopy);
+            }
+         }
+      }
+      else
+      {
+         if(!srcPath.exists())
+         {
+            log.error("Cannot copy dirs");
+         }
+         else
+         {
+            boolean existInList = false;
+            for(String tmpSt : extensionsToCopy)
+            {
+               if(dstPath.getPath().indexOf(tmpSt, dstPath.getPath().length() - tmpSt.length() - 1) != -1)
+               {
+                  existInList = true;
+               }
+            }
+            if(srcPath.canRead() && existInList)
+            {
+               BufferedReader in = new BufferedReader(new FileReader(srcPath));
+               BufferedWriter out = new BufferedWriter(new FileWriter(dstPath));
+               String line = in.readLine();
+               while(line != null)
+               {
+                  out.write(line);
+                  out.newLine();
+                  line = in.readLine();
+               }
+               in.close();
+               out.close();
+            }
+         }
+      }
+   }
+
+   public static void writeToFile(String filename, String content) throws IOException
+   {
+
+      PrintWriter pw = null;
+      File file = null;
+
+      try
+      {
+         file = new File(filename);
+         pw = new PrintWriter(new FileWriter(file));
+
+         pw.print(content);
+
+         pw.flush();
+
+      }
+      finally
+      {
+
+         // Close the PrintWriter
+         if(pw != null) pw.close();
+
+      }
+
+   }
+
+   public static boolean renameFile(String oldFileName, String newFileName)
+   {
+      boolean isRenamed = false;
+
+      File oldFile = new File(oldFileName);
+      if(oldFile.exists()) isRenamed = oldFile.renameTo(new File(newFileName));
+      return isRenamed;
+
+   }
+
+   public static List<String> getAllFiles(File srcPath, List<String> paths, String... extensionsNeeded)
+   {
+      if(paths == null)
+      {
+         paths = new ArrayList<String>();
+      }
+      if(srcPath.isDirectory())
+      {
+         if(srcPath.isHidden() == false || srcPath.getName().startsWith(".") == false)
+         {
+            String files[] = srcPath.list();
+            for(int i = 0; i < files.length; i++)
+            {
+               getAllFiles(new File(srcPath, files[i]), paths, extensionsNeeded);
+            }
+         }
+      }
+      else
+      {
+         for(String tmpSt : extensionsNeeded)
+         {
+            if(srcPath.getPath().indexOf(tmpSt, srcPath.getPath().length() - tmpSt.length() - 1) != -1)
+            {
+               paths.add(srcPath.getPath());
+               return paths;
+            }
+         }
+      }
+      return paths;
+   }
+
+}
